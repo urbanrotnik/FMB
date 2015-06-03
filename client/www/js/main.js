@@ -1,7 +1,7 @@
 'use strict';
 
-localStorage.setItem('username', 'urban');
-localStorage.setItem('Ô', 'urban');
+
+
 /*(function($) {
 
     var sammy = $.sammy( function() {
@@ -98,27 +98,50 @@ $(function() {
 
 (function($) {
 
+
     var sammy = $.sammy( function() {
 
-
-
-        this.get('#login', function (context) {
-                alert('login');
-                $.ajax({
-                url: 'http://localhost:3000/activity/?username='+'urban'+'&password='+'urban',
-                type: 'GET',
-                dataType: 'json', 
-                contentType: 'application/json; charset=utf-8',           
-                success: function (data) { alert(data[1]['name'])  }
+      this.post('#/loginPOST', function (context) {
+        if(this.params['username']!=='' || this.params['password']!==''){
+            alert('y');
+            $.ajax({
+              url: 'http://localhost:3000/user/login?username='+this.params['username']+'&password='+this.params['password']+'',
+              type: 'GET',
+              dataType: 'json',         
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'},         
+              error: function (xhr, status) {
+                 alert('Napačni podatki');
+                window.location.hash = 'login';
+             },
+              success: function (data) {
+               
+                localStorage.setItem('username', data['username']);
+                localStorage.setItem('password', data['password']);
+                localStorage.setItem('id', data['id']);
+                window.location.hash = 'index';
+               }
+            
             });
-            /*console.log("---------MENI-----------");
-            $.get('hbs/index.hbs', function (data) {
-                nastaviStran(data);
-            });*/
-        });
+        }
+        return false;
+    });
 
-        this.get('#my_activity', function (context) {
-           $.ajax({
+      this.get('#logout', function (context) {
+        localStorage.removeItem('username');
+        localStorage.removeItem('password');
+        window.location.hash = 'login';
+    });
+
+      this.get('#login', function (context) {
+        if(localStorage['username']){
+          window.location.hash = 'index';
+      }
+  });
+
+      this.get('#my_activity', function (context) {
+        localStorage.setItem('username', 'urban');
+        localStorage.setItem('password', 'urban');
+        $.ajax({
             url: 'http://localhost:3000/activity/?username='+localStorage.username+'&password='+localStorage.password,
             // url:'http://localhost:3000/activity/?username=urban&password=urban',
             type: 'GET',
@@ -129,12 +152,12 @@ $(function() {
                     'title':'Aktivnosti',
                     'entries': data                                 
                 };
-            loadActivities(activities);
+                loadActivities(activities);
             }});
-        });
+    });
 
-        function loadActivities(data)
-        {  
+      function loadActivities(data)
+      {  
           var source   = $("#articles-template").html();
           var template = Handlebars.compile(source);
           var html = template(data);
@@ -144,28 +167,15 @@ $(function() {
           $("#articleHandlebars ul").listview('refresh');
           $("#articleHandlebars ul").listview().listview('refresh');
 
-        }
+      }
 
 
-        this.get('#activities', function (context) {
-                alert("aktivnosti");
-            /*console.log("---------MENI-----------");
-            $.get('hbs/index.hbs', function (data) {
-                nastaviStran(data);
-            });*/
-        });
 
-        this.get('#findWalk', function (context) {
-            console.log("---------FIND WALK-----------");
-            $.get('hbs/findWalk.hbs', function (data) {
-                nastaviStran(data);
-            });
-        });    
 
-    });
+  });
 
-    $(function() {
-        sammy.run('#index');
-    });
+$(function() {
+    sammy.run('#index');
+});
 
 })(jQuery);

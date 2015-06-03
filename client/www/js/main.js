@@ -138,6 +138,23 @@ $(function() {
       }
   });
 
+        this.get('#index', function (context) {
+         
+        $.ajax({
+            url: 'http://localhost:3000/activity/?username='+localStorage.username+'&password='+localStorage.password,
+            type: 'GET',
+            dataType: 'json', 
+            contentType: 'application/x-www-form-urlencoded',           
+            success: function (data) {                
+                var activities = {
+                    'title':'Aktivnosti',
+                    'list_of_activity': data                                 
+                };
+                
+                initialize1(data);
+            }});
+    });
+
       this.get('#my_activity', function (context) {
         localStorage.setItem('username', 'urban');
         localStorage.setItem('password', 'urban');
@@ -152,7 +169,7 @@ $(function() {
                     'title':'Aktivnosti',
                     'entries': data                                 
                 };
-                loadActivities(activities);
+                 loadActivities(activities);
             }});
     });
 

@@ -29,40 +29,53 @@
 
 
 function initialize1(data) {
-  alert(data);
-  var arrayActivity = [];
+  
 
-  var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+
+  var myLatlng = new google.maps.LatLng(25.363882,31.044922);
   var mapOptions = {
     zoom: 4,
     center: myLatlng
   }
   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-for(var i in data){
- 
-
+  for(var i in data){
   
 
-  //{{#each data}}
-    console.log('test');
-   // var myLatlng = new google.maps.LatLng("{{lat}}","{{lng}}");
-   var myLatlng = new google.maps.LatLng(data[i]['latitude'],data[i]['longitude']);
-    var marker = new google.maps.Marker({
-      position: myLatlng,
-      map: map,
-      title: data[i]['name']
-  });
-  //{{/each}}
-//var myLatlng = new google.maps.LatLng(arrayActivity[i].lat,arrayActivity[i].lng);
-  var marker = new google.maps.Marker({
-      position: myLatlng,
-      map: map,
-      title: data[i]['name']
-  });
-  }
-}
+   /*var infowindow = new google.maps.InfoWindow({
+    content: contentString
+  });*/
 
+
+   var myLatlng = new google.maps.LatLng(data[i]['latitude'],data[i]['longitude']);
+   var marker = new google.maps.Marker({
+    position: myLatlng,
+    map: map,
+    title: data[i]['name']
+  });
+
+marker.content = '<b>'+data[i]['name']+'</b><br/>'+
+   data[i]['description']+'<button onclick="myActivity('+data[i]['id']+')">Podrobnosti</button>';
+
+var infoWindow = new google.maps.InfoWindow();
+google.maps.event.addListener(marker, 'click', function () {
+                                infoWindow.setContent(this.content);
+                                infoWindow.open(this.getMap(), this);
+                            });
+  /* google.maps.event.addListener(marker, 'click', function() {
+    infowindow.open(map,marker);
+  });*/
+/*google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(contentString);
+    infowindow.open(map,marker);
+
+ });
+*/
+ }
+}
+function myActivity(id){
+         window.location.hash = 'activity/'+id;
+    }
 //google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
